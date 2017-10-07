@@ -1,10 +1,15 @@
 import os, sys
 import shutil
 from subprocess import Popen, PIPE
-PATH_TO_PROGRAM="stub.py"
+
 MODE="simple"
 IMAGE_DIR='images/%s' % MODE
 VALID_DIR='correct_result/%s' % MODE
+if len(sys.argv) == 1:
+    PATH_TO_PROGRAM="stub.py"
+else:
+    PATH_TO_PROGRAM=sys.argv[1]
+
 for img in os.listdir(IMAGE_DIR):
    print("wirking with %s" % img)
    p=Popen("%s %s" % (PATH_TO_PROGRAM, img), stdout=PIPE, shell=True)
