@@ -1,14 +1,13 @@
-#include "stdafx.h"
 #include "Common.h"
 
 using namespace std;
 using namespace cv;
 
-Size imgSize(600, 600);
-int clipHist = 0;
-Size kernelSize(1, 1);
+Size imgSize(1000, 700);
+int clipHist = 40;
+Size kernelSize(3, 3);
 int cannyThreashMin = 0;
-int minSignSize = 24;
+int minSignSize = 5;
 
 
 Scalar blueLow(110, 50, 50);
@@ -89,13 +88,13 @@ int Sign(int argc, char* argv[]) {
 	Mat imgCascades = srcRaw;
 
 	CascadeClassifier cascadeRedTriangle;
-	if (!cascadeRedTriangle.load("cascades\\train\\cascade.xml")) { printf("--(!)Error loading\n"); return -1; };
+	if (!cascadeRedTriangle.load("data\\redTriangle\\cascade.xml")) { printf("--(!)Error loading\n"); return -1; };
 
 	//for each found contour
 	for each (vector<Point> vect in contours)
 	{
 		//find rectangle with this contour
-		int x0 = MAXINT32, y0 = MAXINT32, x1 = 0, y1 = 0;
+		int x0 = INT_MAX, y0 = INT_MAX, x1 = 0, y1 = 0;
 		for each (Point p in vect)
 		{
 			if (p.x <= x0)
@@ -109,16 +108,17 @@ int Sign(int argc, char* argv[]) {
 				y1 = p.y;
 		}
 
-		//skip too small rectangles
+		//skip too small rectangles and with wrong shape
 		Rect r(x0, y0, x1 - x0, y1 - y0);
 		if (r.height < minSignSize || r.width < minSignSize) continue;
+		//if (r.height / r.width < 0.5 || r.height / r.width > 2) continue;
 		Mat rect = srcRaw(r);
 
 		cout << r.height << " " << r.width << endl;
 
 		std::vector<Rect> foundSigns;
 
-		cascadeRedTriangle.detectMultiScale(rect, foundSigns, 1.1, 3, 0 | CV_HAAR_SCALE_IMAGE | CASCADE_SCALE_IMAGE | CASCADE_FIND_BIGGEST_OBJECT, Size(minSignSize, minSignSize));
+		cascadeRedTriangle.detectMultiScale(rect, foundSigns, 1.1, 3, 0 | CV_HAAR_SCALE_IMAGE | CASCADE_SCALE_IMAGE , Size(minSignSize, minSignSize));
 
 		if (foundSigns.size() > 0) {
 			Point center(foundSigns[0].x + foundSigns[0].width*0.5 + x0, foundSigns[0].y + foundSigns[0].height*0.5 + y0);

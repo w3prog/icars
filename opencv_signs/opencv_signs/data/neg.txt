@@ -1,0 +1,4 @@
+.\data\neg\1.jpg
+.\data\neg\2.jpg
+.\data\neg\3.jpg
+.\data\neg\4.jpg

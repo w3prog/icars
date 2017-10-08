@@ -1,0 +1,4 @@
+.\data\test\1.jpg
+.\data\test\2.jpg
+.\data\test\3.jpg
+.\data\test\4.jpg
